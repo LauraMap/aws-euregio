@@ -38,8 +38,32 @@ L.control.scale({
 async function showStations(url) {
     let response = await fetch(url);
     let jsondata = await response.json();
+    L.geoJSON(jsondata, {
+        pointToLayer: function(feature, latlng) {
+            return L.marker(latlng, {
+                // icon von https://mapicons.mapsmarker.com/markers/restaurants-bars/wi-fi/?custom_color=3d9970
+                icon: L.icon({
+                    iconUrl: `icons/icon.png`,
+                    iconAnchor: [16, 37],
+                    popupAnchor: [0, -37],
+                })
+            }
+            );
+        },
+        onEachFeature: function (feature, layer) {
+            let prop = feature.properties;
+            layer.bindPopup(`
+            <h4>${prop.name} ${feature.geometry.coordinates[2]} müA</h4>
+            <p> Lufttemperatur: ${prop.LT || "Kein Wert"} °C <br>
+            Relative Luftfeuchte: ${prop.RH || "Kein Wert"} % <br>
+            Windgeschwindigkeit: ${prop.WG || "Kein Wert"} km/h <br>
+            Schneehöhe: ${prop.HS || "Kein Wert"} cm
+            </p>
+            `)
+        }
+    }).addTo(themaLayer.stations);
 
-    // Wetterstationen mit Icons und Popups implementieren
+    // Wetterstationen mit Icons und Popups implementieren 
 
 }
 showStations("https://static.avalanche.report/weather_stations/stations.geojson");
