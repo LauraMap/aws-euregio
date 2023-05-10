@@ -38,8 +38,10 @@ L.control.scale({
 async function showStations(url) {
     let response = await fetch(url);
     let jsondata = await response.json();
+
+    // Wetterstationen mit Icons und Popups implementieren 
     L.geoJSON(jsondata, {
-        pointToLayer: function(feature, latlng) {
+        pointToLayer: function (feature, latlng) {
             return L.marker(latlng, {
                 // icon von https://mapicons.mapsmarker.com/markers/restaurants-bars/wi-fi/?custom_color=3d9970
                 icon: L.icon({
@@ -62,8 +64,6 @@ async function showStations(url) {
             `)
         }
     }).addTo(themaLayer.stations);
-
-    // Wetterstationen mit Icons und Popups implementieren 
 
 }
 showStations("https://static.avalanche.report/weather_stations/stations.geojson");
