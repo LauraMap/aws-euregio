@@ -15,6 +15,7 @@ let map = L.map("map", {
 let themaLayer = {
     stations: L.featureGroup(),
     temperature: L.featureGroup(),
+    windspeed: L.featureGroup()
 }
 
 // Hintergrundlayer
@@ -29,7 +30,8 @@ let layerControl = L.control.layers({
     "Esri WorldImagery": L.tileLayer.provider("Esri.WorldImagery")
 }, {
     "Wetterstationen": themaLayer.stations,
-    "Temperatur": themaLayer.temperature.addTo(map),
+    "Temperatur": themaLayer.temperature,
+    "Windgeschwindigkeit": themaLayer.windspeed.addTo(map)
 }).addTo(map);
 
 layerControl.expand();
@@ -68,7 +70,7 @@ function writeStationLayer(jsondata) {
             <ul> 
                 <li> Lufttemperatur: ${prop.LT || "-"} °C </li> 
                 <li> Relative Luftfeuchte: ${prop.RH || "-"} % </li>
-                <li> Windgeschwindigkeit: ${prop.WG ? (prop.WG * 3.6).toFixed(1) : "-"} km/h </li>
+                <li> Windgeschwindigkeit: ${prop.WG ? prop.WG.toFixed(1) : "-"} km/h </li>
                 <li> Schneehöhe: ${prop.HS || "-"} cm </li>
             </ul>
             <span>${pointInTime.toLocaleString()}</span>
@@ -95,11 +97,34 @@ function writeTemperatureLayer(jsondata) {
         },        
     }).addTo(themaLayer.temperature);
 }
+
+function writeWindspeedLayer(jsondata) {
+    L.geoJSON(jsondata, {
+        filter: function(feature) {
+            if (feature.properties.WG > 0) {
+                return true;
+            }
+        }, 
+        pointToLayer: function(feature, latlng) {
+            let windKMH = feature.properties.WG
+            let color = getColor(windKMH, COLORS.windspeed);
+            
+            return L.marker(latlng, {
+                icon: L.divIcon({
+                    className: "aws-div-icon",
+                    html: `<span style="background-color: ${color}">${windKMH.toFixed(1)}</span>`
+                })
+            })
+        }
+    }).addTo(themaLayer.windspeed);
+}
+
 // Vienna Sightseeing Haltestellen - 
 async function loadStations(url) {
     let response = await fetch(url);
     let jsondata = await response.json();
     writeStationLayer(jsondata);
-    writeTemperatureLayer(jsondata)
+    writeTemperatureLayer(jsondata);
+    writeWindspeedLayer(jsondata)
 }
 loadStations("https://static.avalanche.report/weather_stations/stations.geojson");
