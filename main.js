@@ -13,7 +13,8 @@ let map = L.map("map", {
 
 // thematische Layer
 let themaLayer = {
-    stations: L.featureGroup()
+    stations: L.featureGroup(),
+    temperature: L.featureGroup(),
 }
 
 // Hintergrundlayer
@@ -27,7 +28,8 @@ let layerControl = L.control.layers({
     "Esri WorldTopoMap": L.tileLayer.provider("Esri.WorldTopoMap"),
     "Esri WorldImagery": L.tileLayer.provider("Esri.WorldImagery")
 }, {
-    "Wetterstationen": themaLayer.stations.addTo(map)
+    "Wetterstationen": themaLayer.stations.addTo(map),
+    "Temperatur": themaLayer.temperature.addTo(map),
 }).addTo(map);
 
 // Maßstab
@@ -35,12 +37,8 @@ L.control.scale({
     imperial: false,
 }).addTo(map);
 
-// Vienna Sightseeing Haltestellen
-async function showStations(url) {
-    let response = await fetch(url);
-    let jsondata = await response.json();
-
-    // Wetterstationen mit Icons und Popups implementieren 
+// Wetterstationen mit Icons und Popups implementieren 
+function writeStationLayer(jsondata) {
     L.geoJSON(jsondata, {
         pointToLayer: function (feature, latlng) {
             return L.marker(latlng, {
@@ -55,6 +53,7 @@ async function showStations(url) {
         },
         onEachFeature: function (feature, layer) {
             let prop = feature.properties;
+            let pointInTime = new Date(prop.date);
             layer.bindPopup(`
             <h4>${prop.name} ${feature.geometry.coordinates[2]} müA</h4>
             <ul> 
@@ -63,9 +62,16 @@ async function showStations(url) {
                 <li> Windgeschwindigkeit: ${prop.WG ? (prop.WG * 3.6).toFixed(1) : "-"} km/h </li>
                 <li> Schneehöhe: ${prop.HS || "-"} cm </li>
             </ul>
+            <span>${pointInTime.toLocaleString()}</span>
             `)
         }
     }).addTo(themaLayer.stations);
-
 }
-showStations("https://static.avalanche.report/weather_stations/stations.geojson");
+
+// Vienna Sightseeing Haltestellen - 
+async function loadStations(url) {
+    let response = await fetch(url);
+    let jsondata = await response.json();
+    writeStationLayer(jsondata);
+}
+loadStations("https://static.avalanche.report/weather_stations/stations.geojson");
