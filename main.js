@@ -156,3 +156,15 @@ async function loadStations(url) {
     writeSnowDepthLayer(jsondata);
 }
 loadStations("https://static.avalanche.report/weather_stations/stations.geojson");
+
+// Leaflet Rainviewer
+    L.control.rainviewer({ 
+        position: 'topleft',
+        nextButtonText: '>',
+        playStopButtonText: 'Play/Stop',
+        prevButtonText: '<',
+        positionSliderLabelText: "Uhrzeit:",
+        opacitySliderLabelText: "Transparenz:",
+        animationInterval: 500,
+        opacity: 0.5
+    }).addTo(map);
