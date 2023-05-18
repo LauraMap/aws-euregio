@@ -33,7 +33,7 @@ let layerControl = L.control.layers({
     "Temperatur": themaLayer.temperature,
     "Windgeschwindigkeit": themaLayer.windspeed.addTo(map)
 }).addTo(map);
-
+// Layer beim Besuch auf der Seite ausklappen
 layerControl.expand();
 
 // Maßstab
@@ -41,6 +41,7 @@ L.control.scale({
     imperial: false,
 }).addTo(map);
 
+// Farbskalierung der Marker
 function getColor(value, ramp) {
     for (let rule of ramp) {
         if (value >= rule.min && value < rule.max) {
@@ -79,6 +80,7 @@ function writeStationLayer(jsondata) {
     }).addTo(themaLayer.stations);
 }
 
+// Temperatur Layer
 function writeTemperatureLayer(jsondata) {
     L.geoJSON(jsondata, {
         filter: function(feature) {
@@ -98,6 +100,7 @@ function writeTemperatureLayer(jsondata) {
     }).addTo(themaLayer.temperature);
 }
 
+// Windgeschwindigkeit Layer
 function writeWindspeedLayer(jsondata) {
     L.geoJSON(jsondata, {
         filter: function(feature) {
@@ -119,7 +122,7 @@ function writeWindspeedLayer(jsondata) {
     }).addTo(themaLayer.windspeed);
 }
 
-// Vienna Sightseeing Haltestellen - 
+// Funktionen aufrufen (siehe Vienna Sightseeing Haltestellen Beispiel)
 async function loadStations(url) {
     let response = await fetch(url);
     let jsondata = await response.json();
