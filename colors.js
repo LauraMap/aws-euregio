@@ -102,5 +102,47 @@ const COLORS = {
             max: 999,
             color: "#ff3232"
         },
+    ],
+    snowDepth: [
+        {
+            min: 0,
+            max: 10,
+            color: "#ffffb2"
+        },
+        {
+            min: 10,
+            max: 25,
+            color: "#b0ffbc"
+        },
+        {
+            min: 25,
+            max: 50,
+            color: "#8cffff"
+        },
+        {
+            min: 50,
+            max: 100,
+            color: "#19cdff"
+        },
+        {
+            min: 100,
+            max: 200,
+            color: "#1982ff"
+        },
+        {
+            min: 200,
+            max: 300,
+            color: "#0f5abe"
+        },
+        {
+            min: 300,
+            max: 400,
+            color: "#784bff"
+        },
+        {
+            min: 400,
+            max: 9999,
+            color: "#cd0feb"
+        }
     ]
 }
