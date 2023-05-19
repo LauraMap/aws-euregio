@@ -30,10 +30,10 @@ let layerControl = L.control.layers({
     "Esri WorldTopoMap": L.tileLayer.provider("Esri.WorldTopoMap"),
     "Esri WorldImagery": L.tileLayer.provider("Esri.WorldImagery")
 }, {
-    "Wetterstationen": themaLayer.stations,
-    "Temperatur": themaLayer.temperature,
+    "Wetterstationen": themaLayer.stations.addTo(map),
+    "Temperatur": themaLayer.temperature.addTo(map),
     "Windgeschwindigkeit": themaLayer.windspeed,
-    "Schneehöhe": themaLayer.snowdepth.addTo(map)
+    "Schneehöhe": themaLayer.snowdepth
 }).addTo(map);
 // Layer beim Besuch auf der Seite ausklappen
 layerControl.expand();
